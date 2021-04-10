@@ -1,1 +1,1 @@
-pipenv run python bylabel.py
+pipenv run python bylabel.py $*

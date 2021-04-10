@@ -23,7 +23,9 @@ SCOPES = [
         'https://www.googleapis.com/auth/spreadsheets'
         ]
 #PATTERN = r'en el establecimiento (.*) por $ (.*) , el (.*)'
-MAX=150
+import sys
+MAX=sys.argv[1] if len(sys.argv) > 1 else 150
+
 SQRT=int(math.ceil(math.sqrt(MAX)))
 
 def up(times=1):
