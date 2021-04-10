@@ -24,7 +24,7 @@ SCOPES = [
         ]
 #PATTERN = r'en el establecimiento (.*) por $ (.*) , el (.*)'
 import sys
-MAX=sys.argv[1] if len(sys.argv) > 1 else 150
+MAX=int(sys.argv[1]) if len(sys.argv) > 1 else 150
 
 SQRT=int(math.ceil(math.sqrt(MAX)))
 
