@@ -26,6 +26,11 @@ SCOPES = [
 MAX=150
 SQRT=int(math.ceil(math.sqrt(MAX)))
 
+def up(times=1):
+    for _ in range(times):
+        print('\033[F', end='')
+        #print('\033[A', end='')
+
 def multipija(mime_msg):
     messageMainType = mime_msg.get_content_maintype()
     if messageMainType == 'multipart':
@@ -44,21 +49,28 @@ def main():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
+    print('I haz token file?')
     if os.path.exists('token.pickle'):
+        print('Load token')
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
+        print('No valid token')
         if creds and creds.expired and creds.refresh_token:
+            print('Refresk token')
             creds.refresh(Request())
         else:
+            print('Grant auth')
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
+            print('Dump toekn for the future generations')
             pickle.dump(creds, token)
 
+    print('Build service, whatever that means')
     service = build('gmail', 'v1', credentials=creds)
 
     # Uncomment this block to get the ID from the chosen label on Gmail.
@@ -73,22 +85,33 @@ def main():
     #             print(label)
     #     exit(0)
 
+    print('Request messages from Gmail')
     results = service.users().messages().list(
             userId='me',
             labelIds=[LABEL_ID],
             maxResults=MAX,
             q='nuevos consumos de sus tarjetas visa'
             ).execute()
+    print('Get message IDs')
     messageIdsList = results.get('messages', [])
 
     expenses = [('Donde', 'Cuanto', 'Cuando', '$/u$s', 'Cuotas', 'Tarjeta')]
+    print('I haz Sheetty token?')
     if os.path.exists('expenses.pickle'):
+        print('Load creds')
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
     else:
+        print('No expense pickle for you')
         if not messageIdsList:
             print('No messages found.')
         else:
+            print('Process messages')
+            i=0
+            for _ in range(SQRT-2):
+                print ('..'*SQRT)
+            print('..' * (MAX % SQRT))
+            up(SQRT-1)
             i=0
             for messageIds in messageIdsList:
                 i+=1
@@ -114,10 +137,15 @@ def main():
                 expenses.append(parts)
 
     print()
+    print()
+    print('This is the truth of the breaded meat')
+    print()
     pprint(expenses)
 
+    print('Build Sheetty stuff')
     sheetyService = build('sheets', 'v4', credentials=creds)
 
+    print('Update Sheet')
     results = sheetyService.spreadsheets().values().update(
             spreadsheetId=SHEET,
             valueInputOption='RAW',
@@ -129,7 +157,7 @@ def main():
             ).execute()
 
     print()
-    print('saved')
+    print('Sheet done')
     pprint(results)
 
 if __name__ == '__main__':
